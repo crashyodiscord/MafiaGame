@@ -5,9 +5,8 @@ using namespace std;
 
 void TheVote(int &Traitors, int &Faithful)
 {
-
+	//Making int array with all 0s
 	vector<int> AllPlayers(Traitors + Faithful);
-
 	fill(AllPlayers.begin(), AllPlayers.end(), 0);
 
 	AllPlayers[rand() % Faithful] += Traitors;
@@ -17,17 +16,30 @@ void TheVote(int &Traitors, int &Faithful)
 		AllPlayers[rand() % (Faithful + Traitors)]++;
 	}
 
-	int index = 0;
-	int max = 0;
+	vector<int> index;
+	index.push_back(0);
+	vector<int> max;
+	max.push_back(0);
+	bool tie = false;
 	for (int i = 0; i < (Faithful + Traitors); i++)
 	{
-		if (AllPlayers[i] > max)
+		if (AllPlayers[i] == max[0])
 		{
-			max = AllPlayers[i];
-			index = i;
+			max.push_back(AllPlayers[i]);
+			index.push_back(i);
+		}
+		if (AllPlayers[i] > max[0])
+		{
+			max[0] = AllPlayers[i];
+			index[0] = i;
 		}
 	}
-	if (index + 1 >= Faithful) Traitors--;
+	if (tie)
+	{
+		index[0] = rand() % index.size();
+	}
+	//Justification for dealing with a draw: Choosing the first person to appear
+	if (index[0] + 1 >= Faithful) Traitors--;
 	else Faithful--;
 }
 
@@ -53,8 +65,8 @@ int main()
 		//Main Game loop
 		while (Faithful + Traitors > 2 && Faithful > 0 && Traitors > 0)
 		{
-			Faithful--;
 			TheVote(Traitors, Faithful);
+			Faithful--;
 		}
 
 		if (Traitors > 0) TraitorWins++;
